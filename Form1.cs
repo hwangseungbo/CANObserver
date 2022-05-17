@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections;
+using System.Threading.Tasks;
 
 namespace CANObserver
 {
@@ -1476,7 +1477,7 @@ namespace CANObserver
             ListViewItem i123 = new ListViewItem(source);
             listView1.Items.Add(i123);
 
-
+            
 
         }
 
@@ -1495,7 +1496,7 @@ namespace CANObserver
             thread = new Thread(Readqueue_Thread);
             if (onlyone)
             {
-                thread.IsBackground = true;
+                thread.IsBackground = true; 
                 thread.Start();
                 onlyone = false;
             }
@@ -1503,13 +1504,13 @@ namespace CANObserver
 
         }
         
-        private void Readqueue_Thread()
+        private async void Readqueue_Thread()
         {
             while (true)
             {
                 if (serialPort.IsOpen)
                 {
-                    //que 안에 들어있는 데이터는 자릿수가 10이상인 온전한 데이터만 들어있다.
+                    //que 안에 들어있는 데이터는 자릿수가 20이상인 온전한 데이터만 들어있다.
                     if (que.Count > 0 && listBox.InvokeRequired)
                     {
                         listBox.BeginInvoke(new MethodInvoker(delegate ()
@@ -1540,6 +1541,12 @@ namespace CANObserver
                                         // index 16,17 = 원격 가속 페달 위치
                                         // index 18,19 = 가속 페달 위치 2
                                         // index 20,21의 6.1, 6.2 = 차량 가속도 제한 상태
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        int state2979 = Convert.ToInt32(ecuSubData, 16);
+                                        string temp2979 = Convert.ToString(state2979, 2);
+                                        string state_2979 = temp2979.Substring(6, 1) + temp2979.Substring(7, 1);
+                                        listView1.Items[8].SubItems[8].Text = state_2979;
+
                                         // index 20,21의 6.3, 6.4 = 순간 엔진 최대 출력 활성화 피드백
                                         // index 20,21의 6.5, 6.6 = DPF 열 관리 활성
                                         // index 20,21의 6.7, 6.8 = SCR 열 관리 활성
@@ -1701,6 +1708,13 @@ namespace CANObserver
 
                                         // index 12~13 = 엔진 확장 크랭크케이스 블로바이 압력
                                         // index 14~15 = 엔진 오일 레벨
+                                        ecuSubData = ecuData.Substring(14, 2);
+                                        int level_98 = Convert.ToInt32(ecuSubData, 16);
+                                        level_98 = level_98 * 4;
+                                        level_98 = level_98 / 10;
+                                        if (level_98 > 100) { level_98 = 100; }
+                                        listView1.Items[76].SubItems[8].Text = level_98.ToString() + "%";
+
                                         // index 16~17 = 엔진 오일 압력
                                         ecuSubData = ecuData.Substring(16, 2);
                                         int pressure_100 = Convert.ToInt32(ecuSubData, 16);
@@ -1721,9 +1735,21 @@ namespace CANObserver
                                     case "fef1":    // PGN  65265
                                         // index 10~11의 1.1, 1.2 = 2단 속도 액슬 스위치
                                         // index 10~11의 1.3, 1.4 = 주차 브레이크 스위치
+                                        ecuSubData = ecuData.Substring(10, 2);
+                                        int state70 = Convert.ToInt32(ecuSubData, 16);
+                                        string temp70 = Convert.ToString(state70, 2);
+                                        string state_70 = temp70.Substring(4, 1) + temp70.Substring(5, 1);
+                                        listView1.Items[82].SubItems[8].Text = state_70;
+
                                         // index 10~11의 1.5, 1.6 = 크루즈 컨트롤 일시 정지 스위치
                                         // index 10~11의 1.7, 1.8 = 주차 브레이크 해제 금지 요청
                                         // index 12~15 = 휠 기반 차량 속도
+                                        ecuSubData = ecuData.Substring(14, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(12, 2);
+                                        int speed_84 = Convert.ToInt32(ecuSubData, 16);
+                                        speed_84 = speed_84 / 256;
+                                        listView1.Items[85].SubItems[8].Text = speed_84.ToString() + "km/h";
+
                                         // index 16~17의 4.1, 4.2 = 크루즈 컨트롤 액티브
                                         // index 16~17의 4.3, 4.4 = 크루즈 컨트롤 활성화 스위치
                                         // index 16~17의 4.5, 4.6 = 브레이크 스위치
@@ -1744,8 +1770,27 @@ namespace CANObserver
 
                                     case "fef2":    // PGN  65266
                                         // index 10~13 = 엔진 연료 비율
+                                        ecuSubData = ecuData.Substring(12, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(10, 2);
+                                        int level_183 = Convert.ToInt32(ecuSubData, 16);
+                                        level_183 = level_183 * 5;
+                                        level_183 = level_183 / 100;
+                                        listView1.Items[101].SubItems[8].Text = level_183.ToString() + "L/h";
+
                                         // index 14~17 = 엔진 순간 연비
+                                        ecuSubData = ecuData.Substring(16, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(14, 2);
+                                        int level_184 = Convert.ToInt32(ecuSubData, 16);
+                                        level_184 = level_184 / 512;
+                                        listView1.Items[102].SubItems[8].Text = level_184.ToString() + "km/L";
+
                                         // index 18~21 = 엔진 평균 연비
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(18, 2);
+                                        int level_185 = Convert.ToInt32(ecuSubData, 16);
+                                        level_185 = level_185 / 512;
+                                        listView1.Items[103].SubItems[8].Text = level_185.ToString() + "km/L";
+
                                         // index 22~23 = 엔진 스로틀 밸브 1 위치
                                         // index 24~25 = 엔진 스로틀 밸브 2 위치
 
@@ -1764,20 +1809,57 @@ namespace CANObserver
 
                                     case "fef7":    // PGN  65271
                                         // index 10~11 = 순 배터리 전류
+                                        ecuSubData = ecuData.Substring(10, 2);
+                                        int current_114 = Convert.ToInt32(ecuSubData, 16);
+                                        current_114 = current_114 - 125;
+                                        listView1.Items[113].SubItems[8].Text = current_114.ToString() + "A";
+
                                         // index 12~13 = 교류 발전기 전류
+                                        ecuSubData = ecuData.Substring(12, 2);
+                                        int current_115 = Convert.ToInt32(ecuSubData, 16);
+                                        listView1.Items[114].SubItems[8].Text = current_115.ToString() + "A";
+
                                         // index 14~17 = 충전 시스템 전위(전압)
+                                        ecuSubData = ecuData.Substring(16, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(14, 2);
+                                        int voltage_167 = Convert.ToInt32(ecuSubData, 16);
+                                        voltage_167 = voltage_167 * 5;
+                                        voltage_167 = voltage_167 / 100;
+                                        listView1.Items[115].SubItems[8].Text = voltage_167.ToString() + "V";
+
                                         // index 18~21 = 배터리 전위 / 전원 입력 1
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(18, 2);
+                                        int voltage_168 = Convert.ToInt32(ecuSubData, 16);
+                                        voltage_168 = voltage_168 * 5;
+                                        voltage_168 = voltage_168 / 100;
+                                        listView1.Items[116].SubItems[8].Text = voltage_168.ToString() + "V";
+
                                         // index 22~25 = 키 스위치 배터리 전위
+                                        ecuSubData = ecuData.Substring(24, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(22, 2);
+                                        int voltage_158 = Convert.ToInt32(ecuSubData, 16);
+                                        voltage_158 = voltage_158 * 5;
+                                        voltage_158 = voltage_158 / 100;
+                                        listView1.Items[117].SubItems[8].Text = voltage_158.ToString() + "V";
 
                                         break;
 
                                     case "fefc":    // PGN  65276
                                         // index 10~11 = 와셔액 레벨
+                                        ecuSubData = ecuData.Substring(10, 2);
+                                        int level_80 = Convert.ToInt32(ecuSubData, 16);
+                                        level_80 = level_80 * 4;
+                                        level_80 = level_80 / 10;
+                                        if (level_80 > 100) { level_80 = 100; }
+                                        listView1.Items[118].SubItems[8].Text = level_80.ToString() + "%";
+
                                         // index 12~13 = 연료 레벨
                                         ecuSubData = ecuData.Substring(12, 2);
                                         int level_96 = Convert.ToInt32(ecuSubData, 16);
                                         level_96 = level_96 * 4;
                                         level_96 = level_96 / 10;
+                                        if(level_96 > 100) { level_96 = 100; }
                                         listView1.Items[119].SubItems[8].Text = level_96.ToString() + "%";
 
                                         break;
@@ -1796,6 +1878,12 @@ namespace CANObserver
                             listBox.Items.Add(que.Dequeue());
                             listBox.SelectedIndex = listBox.Items.Count - 1;
                             listBox.SelectedIndex = -1;
+
+                            ecuSubData = ecuData.Substring(3, 4);
+
+                            //파싱되는 switch 문 복사
+
+
                         }
                         catch (Exception ex)
                         {
@@ -1803,10 +1891,15 @@ namespace CANObserver
                         }
                     }
                 }
+
+                await Task.Delay(1);
+
             }
         }
 
+
         // form2로 부터 Data를 받아와서 처리하는 부분(시리얼통신을 통한 데이터 리시브가 아니다.)
+        // https://dream-hacker.tistory.com/55 참고
         private void DataRecevieEvent(string[] data)
         {
             if (!serialPort.IsOpen)
@@ -1817,12 +1910,6 @@ namespace CANObserver
                 string paratybits = data[3];
                 string stopbits = data[4];
                 string flowcontrol = data[5];
-
-
-                //foreach (string datas in data)
-                //{
-                //    listBox.Items.Add(datas);
-                //}
 
 
                 listBox.SelectedIndex = listBox.Items.Count - 1;
@@ -1866,6 +1953,12 @@ namespace CANObserver
             }
         }
 
+        private void connectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form2 form2 = new Form2();
+            form2.DataPassEvent += new Form2.DataPassEventHandler(DataRecevieEvent);
+            form2.ShowDialog();
+        }
 
         private void serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)  // 수신이벤트 발생시 이 부분이 실행된다.
         {
@@ -1874,7 +1967,7 @@ namespace CANObserver
                 if (serialPort.IsOpen)
                 {
                     string data = serialPort.ReadTo("\r");
-                    if (data.Length > 10)
+                    if (data.Length > 20)
                     {
                         que.Enqueue(data);
                         Debug.WriteLine(data);
@@ -1913,6 +2006,9 @@ namespace CANObserver
                         //Debug.WriteLine(data);
                     }
                 }
+
+                //await Task.Delay(1);
+
             }
             catch (Exception ex)
             {
@@ -1964,12 +2060,7 @@ namespace CANObserver
             }
         }
 
-        private void connectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Form2 form2 = new Form2();
-            form2.DataPassEvent += new Form2.DataPassEventHandler(DataRecevieEvent);
-            form2.ShowDialog();
-        }
+        
 
         // Clear버튼 클릭 이벤트
         private void btn_Clear_Click(object sender, EventArgs e)
@@ -1987,7 +2078,7 @@ namespace CANObserver
 
 
         // Save버튼 클릭 이벤트
-        private void btn_Save_Click(object sender, EventArgs e)
+        private async void btn_Save_Click(object sender, EventArgs e)
         {
             SystemSounds.Beep.Play();
             for (int i = 0; i <= listBox.Items.Count - 1; i++)
@@ -2008,6 +2099,8 @@ namespace CANObserver
 
                 this.Text = "CANObserver";
             }
+
+            await Task.Delay(10);
         }
 
 

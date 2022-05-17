@@ -373,7 +373,6 @@ namespace CANObserver
         private System.Windows.Forms.Label lbl_TxCount;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.IO.Ports.SerialPort serialPort;
         private System.Windows.Forms.TabPage Monitor;
         private System.Windows.Forms.ListView listView1;
@@ -387,6 +386,7 @@ namespace CANObserver
         private System.Windows.Forms.ColumnHeader Type;
         private System.Windows.Forms.ColumnHeader Value;
         private System.Windows.Forms.ColumnHeader 비고;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
 
