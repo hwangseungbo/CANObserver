@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 
 namespace CANObserver
 {
+    //send 버튼 기능 추가 및 기타 업데이트 필요.
+
     public partial class Form1 : Form
     {
         Process[] Proc = Process.GetProcesses();
@@ -224,14 +226,14 @@ namespace CANObserver
             ListViewItem i15 = new ListViewItem(source);
             listView1.Items.Add(i15);
             source[1] = "512";    // SPN
-            source[2] = "운전자 요청 엔진 - 퍼센트 토크";    // Description
+            source[2] = "운전자 요구 엔진 - 퍼센트 토크";    // Description
             source[3] = "1B";    // Size
             source[4] = "2";    // Start
             source[5] = "1 %/bit, -125 % offset";    // Resoulution
             source[6] = "-125 to 125 %";    // DataRange
             source[7] = "Measured";    // Type
             source[8] = "";    // Value 비워둘것
-            source[9] = "운전자가 요청한 엔진의 토크 출력입니다. Operational Range : 0 to 125 %";  // 비고
+            source[9] = "운전자가 요구한 엔진의 토크 출력입니다. Operational Range : 0 to 125 %";  // 비고
             ListViewItem i16 = new ListViewItem(source);
             listView1.Items.Add(i16);
             source[1] = "513";    // SPN
@@ -882,7 +884,7 @@ namespace CANObserver
             source[6] = "-40 to 210 deg C";    // DataRange
             source[7] = "Measured";    // Type
             source[8] = "";    // Value 비워둘것
-            source[9] = "터보차저 윤활유의 온도.";  // 비고
+            source[9] = "터보차저 뒤에 위치한 인터쿨러에서 발견되는 액체의 온도.";  // 비고
             ListViewItem i72 = new ListViewItem(source);
             listView1.Items.Add(i72);
             source[1] = "1134";    // SPN
@@ -1238,7 +1240,7 @@ namespace CANObserver
             source[6] = "0 to 125.5 km/L";    // DataRange
             source[7] = "Measured";    // Type
             source[8] = "";    // Value 비워둘것
-            source[9] = "관심 차량 운행 구간의 순간 연비 평균.";  // 비고
+            source[9] = "차량 운행 구간의 순간 연비 평균.";  // 비고
             ListViewItem i103 = new ListViewItem(source);
             listView1.Items.Add(i103);
             source[1] = "51";    // SPN
@@ -1380,7 +1382,7 @@ namespace CANObserver
             source[6] = "0 to 3212.75 V";    // DataRange
             source[7] = "Measured";    // Type
             source[8] = "";    // Value 비워둘것
-            source[9] = "충전 시스템 출력에서 ​​측정된 전위입니다.";  // 비고
+            source[9] = "충전 시스템 출력에서 ​​측정된 전위.";  // 비고
             ListViewItem i115 = new ListViewItem(source);
             listView1.Items.Add(i115);
             source[1] = "168";    // SPN
@@ -1477,7 +1479,14 @@ namespace CANObserver
             ListViewItem i123 = new ListViewItem(source);
             listView1.Items.Add(i123);
 
-            
+            ecuData = "e18feef00844ffff00fffffffa";
+
+            // index 22~23 = 엔진 냉각수 압력
+            ecuSubData = ecuData.Substring(22, 2);
+            int pressure_109 = Convert.ToInt32(ecuSubData, 16);
+            pressure_109 = pressure_109 * 2;
+            listView1.Items[79].SubItems[8].Text = pressure_109.ToString() + "kPa";
+
 
         }
 
@@ -1533,32 +1542,137 @@ namespace CANObserver
                                 {
                                     case "f003":   // PGN  61443  0xfoo3
                                         // index 10,11의 1.1, 1.2 = 가속 페달 1 저속 유휴 스위치
+                                        ecuSubData = ecuData.Substring(10, 2);
+                                        int state558 = Convert.ToInt32(ecuSubData, 16);
+                                        string temp558 = Convert.ToString(state558, 2);
+                                        temp558 = temp558.PadLeft(8, '0');
+                                        string state_558 = temp558.Substring(6, 2);
+                                        listView1.Items[0].SubItems[8].Text = state_558 + " (2)";
+
                                         // index 10,11의 1.3, 1.4 = 가속 페달 킥다운 스위치
+                                        ecuSubData = ecuData.Substring(10, 2);
+                                        int state559 = Convert.ToInt32(ecuSubData, 16);
+                                        string temp559 = Convert.ToString(state559, 2);
+                                        temp559 = temp559.PadLeft(8, '0');
+                                        string state_559 = temp559.Substring(4, 2);
+                                        listView1.Items[1].SubItems[8].Text = state_559 + " (2)";
+
                                         // index 10,11의 1.5, 1.6 = 도로 속도 제한 상태
+                                        ecuSubData = ecuData.Substring(10, 2);
+                                        int state1437 = Convert.ToInt32(ecuSubData, 16);
+                                        string temp1437 = Convert.ToString(state1437, 2);
+                                        temp1437 = temp1437.PadLeft(8, '0');
+                                        string state_1437 = temp1437.Substring(2, 2);
+                                        listView1.Items[2].SubItems[8].Text = state_1437 + " (2)";
+
                                         // index 10,11의 1.7, 1.8 = 가속 페달 2 저속 유휴 스위치
+                                        ecuSubData = ecuData.Substring(10, 2);
+                                        int state2970 = Convert.ToInt32(ecuSubData, 16);
+                                        string temp2970 = Convert.ToString(state2970, 2);
+                                        temp2970 = temp2970.PadLeft(8, '0');
+                                        string state_2970 = temp2970.Substring(0, 2);                   
+                                        listView1.Items[3].SubItems[8].Text = state_2970;
+
                                         // index 12,13 = 가속 페달 위치 1
+                                        ecuSubData = ecuData.Substring(12, 2);
+                                        int position_91 = Convert.ToInt32(ecuSubData, 16);
+                                        position_91 = position_91 * 4;
+                                        position_91 = position_91 / 10;
+                                        listView1.Items[4].SubItems[8].Text = position_91.ToString() + "%";
+
                                         // index 14,15 = 현재 속도에서 엔진 퍼센트 부하
+                                        ecuSubData = ecuData.Substring(14, 2);
+                                        int load_92 = Convert.ToInt32(ecuSubData, 16);
+                                        listView1.Items[5].SubItems[8].Text = load_92.ToString() + "%";
+
                                         // index 16,17 = 원격 가속 페달 위치
+                                        ecuSubData = ecuData.Substring(16, 2);
+                                        int position_974 = Convert.ToInt32(ecuSubData, 16);
+                                        position_974 = position_974 * 4;
+                                        position_974 = position_974 / 10;
+                                        listView1.Items[6].SubItems[8].Text = position_974.ToString() + "%";
+
                                         // index 18,19 = 가속 페달 위치 2
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int position_29 = Convert.ToInt32(ecuSubData, 16);
+                                        position_29 = position_29 * 4;
+                                        position_29 = position_29 / 10;
+                                        listView1.Items[7].SubItems[8].Text = position_29.ToString() + "%";
+
                                         // index 20,21의 6.1, 6.2 = 차량 가속도 제한 상태
                                         ecuSubData = ecuData.Substring(20, 2);
                                         int state2979 = Convert.ToInt32(ecuSubData, 16);
                                         string temp2979 = Convert.ToString(state2979, 2);
-                                        string state_2979 = temp2979.Substring(6, 1) + temp2979.Substring(7, 1);
-                                        listView1.Items[8].SubItems[8].Text = state_2979;
+                                        temp2979 = temp2979.PadLeft(8, '0');
+                                        string state_2979 = temp2979.Substring(6, 2);
+                                        listView1.Items[8].SubItems[8].Text = state_2979 + " (2)";
 
                                         // index 20,21의 6.3, 6.4 = 순간 엔진 최대 출력 활성화 피드백
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        int state5021 = Convert.ToInt32(ecuSubData, 16);
+                                        string temp5021 = Convert.ToString(state5021, 2);
+                                        temp5021 = temp5021.PadLeft(8, '0');
+                                        string state_5021 = temp5021.Substring(4, 2);
+                                        listView1.Items[9].SubItems[8].Text = state_5021 + " (2)";
+
                                         // index 20,21의 6.5, 6.6 = DPF 열 관리 활성
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        int state5399 = Convert.ToInt32(ecuSubData, 16);
+                                        string temp5399 = Convert.ToString(state5399, 2);
+                                        temp5399 = temp5399.PadLeft(8, '0');
+                                        string state_5399 = temp5399.Substring(2, 2);
+                                        listView1.Items[10].SubItems[8].Text = state_5399 + " (2)";
+
                                         // index 20,21의 6.7, 6.8 = SCR 열 관리 활성
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        int state5400 = Convert.ToInt32(ecuSubData, 16);
+                                        string temp5400 = Convert.ToString(state5400, 2);
+                                        temp5400 = temp5400.PadLeft(8, '0');
+                                        string state_5400 = temp5400.Substring(0, 2);
+                                        listView1.Items[11].SubItems[8].Text = state_5400 + " (2)";
+
                                         // index 22,23 = 실제 최대 가용 엔진 – 퍼센트 토크
+                                        ecuSubData = ecuData.Substring(22, 2);
+                                        int torque_3357 = Convert.ToInt32(ecuSubData, 16);
+                                        torque_3357 = torque_3357 * 4;
+                                        torque_3357 = torque_3357 / 10;
+                                        listView1.Items[12].SubItems[8].Text = torque_3357.ToString() + "%";
+
                                         // index 24,25 = 예상 펌핑 – 퍼센트 토크
+                                        ecuSubData = ecuData.Substring(24, 2);
+                                        int torque_5398 = Convert.ToInt32(ecuSubData, 16);
+                                        torque_5398 = torque_5398 * 4;
+                                        torque_5398 = torque_5398 / 10;
+                                        torque_5398 = torque_5398 - 125;
+                                        listView1.Items[13].SubItems[8].Text = torque_5398.ToString() + "%";
 
                                         break;
                                     
                                     case "f004":   // PGN  61444  0xf004
 
-                                        // index 10 = 엔진 토크 모드
-                                        // index 11 = 실제 엔진 - 퍼센트 토크 고해상도
+                                        // index 10~11의 1.1 ~ 1.4 = 엔진 토크 모드
+                                        ecuSubData = ecuData.Substring(10, 2);
+                                        int state899 = Convert.ToInt32(ecuSubData, 16);
+                                        string temp899 = Convert.ToString(state899, 2);
+                                        temp899 = temp899.PadLeft(8, '0');
+                                        string state_899 = temp899.Substring(4, 4);
+                                        listView1.Items[14].SubItems[8].Text = state_899.ToString() + " (2)";
+
+                                        // index 10~11의 1.5 ~ 1.8 = 실제 엔진 - 퍼센트 토크 고해상도
+                                        ecuSubData = ecuData.Substring(10, 2);
+                                        int torque4154 = Convert.ToInt32(ecuSubData, 16);
+                                        string temp4154 = Convert.ToString(torque4154, 2);
+                                        temp4154 = temp4154.PadLeft(8, '0');
+                                        temp4154 = temp4154.Substring(0, 4);
+                                        double torque_4154 = Convert.ToInt32(temp4154, 2);
+                                        torque_4154 = torque_4154 * 125;
+                                        torque_4154 = torque_4154 / 1000;
+                                        listView1.Items[15].SubItems[8].Text = torque_4154.ToString() + "%";
+                                        if (torque_4154 > 0.875) 
+                                        {
+                                            listView1.Items[15].SubItems[8].Text = "Not available";
+                                        }
+
 
                                         // index 12~13 = 운전자 수요 엔진 - 퍼센트 토크
                                         ecuSubData = ecuData.Substring(12, 2);
@@ -1581,7 +1695,16 @@ namespace CANObserver
                                         listView1.Items[18].SubItems[8].Text = rpm_190.ToString()+ "rpm";
 
                                         // index 20~21 = 엔진 제어용 제어 장치의 소스주소
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        listView1.Items[19].SubItems[8].Text = "0x" + ecuSubData.ToString();
+
                                         // index 22 = 엔진 스타터 모드
+                                        ecuSubData = ecuData.Substring(22, 1);
+                                        int temp1675 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_1675 = Convert.ToString(temp1675, 2);
+                                        state_1675 = state_1675.PadLeft(4, '0');
+                                        listView1.Items[20].SubItems[8].Text = state_1675;
+
                                         // index 23 = 사용안함
 
                                         // index 24~25 = 엔진 수요 - 퍼센트 토크
@@ -1593,66 +1716,375 @@ namespace CANObserver
                                         break;
 
                                     case "f00e":    // PGN  61454
+
                                         // index 10~13 = NOx 흡기
+                                        ecuSubData = ecuData.Substring(12, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(10, 2);
+                                        int intake_3216 = Convert.ToInt32(ecuSubData, 16);
+                                        intake_3216 = intake_3216 * 5;
+                                        intake_3216 = intake_3216 / 100;
+                                        intake_3216 = intake_3216 - 200;
+                                        listView1.Items[22].SubItems[8].Text = intake_3216.ToString() + "ppm";
+
                                         // index 14~17 = O2 흡기
+                                        ecuSubData = ecuData.Substring(16, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(14, 2);
+                                        double intake_3217 = Convert.ToInt32(ecuSubData, 16);
+                                        intake_3217 = intake_3217 * 0.000514;
+                                        intake_3217 = intake_3217 - 12;
+                                        listView1.Items[23].SubItems[8].Text = intake_3217.ToString() + "%";
+
                                         // index 18,19의 5.1, 5.2 = 흡기 가스 센서 전원 센서
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int state3218 = Convert.ToInt32(ecuSubData, 16);
+                                        string temp3218 = Convert.ToString(state3218, 2);
+                                        temp3218 = temp3218.PadLeft(8, '0');
+                                        string temp_3218 = temp3218.Substring(6, 1) + temp3218.Substring(7, 1);
+                                        listView1.Items[24].SubItems[8].Text = temp_3218.ToString() + " (2)";
+
                                         // index 18,19의 5.3, 5.4 = 온도에따른 흡기 가스 센서
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int state3219 = Convert.ToInt32(ecuSubData, 16);
+                                        string temp3219 = Convert.ToString(state3219, 2);
+                                        temp3219 = temp3219.PadLeft(8, '0');
+                                        string temp_3219 = temp3219.Substring(4, 1) + temp3219.Substring(5, 1);
+                                        listView1.Items[25].SubItems[8].Text = temp_3219.ToString() + " (2)";
+
                                         // index 18,19의 5.5, 5.6 = 흡기 NOx 안정 판독
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int state3220 = Convert.ToInt32(ecuSubData, 16);
+                                        string temp3220 = Convert.ToString(state3220, 2);
+                                        temp3220 = temp3220.PadLeft(8, '0');
+                                        string temp_3220 = temp3220.Substring(2, 1) + temp3220.Substring(3, 1);
+                                        listView1.Items[26].SubItems[8].Text = temp_3220.ToString() + " (2)";
+
                                         // index 18,19의 5.7, 5.8 = 넓은 범위의 % O2 안정 판독값
-                                        // index 20,21의 6.1 ~ 6.5 = 흡기 NOx 센서 예비 FMI
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int state3221 = Convert.ToInt32(ecuSubData, 16);
+                                        string temp3221 = Convert.ToString(state3221, 2);
+                                        temp3221 = temp3221.PadLeft(8, '0');
+                                        string temp_3221 = temp3221.Substring(0, 1) + temp3221.Substring(1, 1);
+                                        listView1.Items[27].SubItems[8].Text = temp_3221.ToString() + " (2)";
+
+                                        // index 20,21의 6.1 ~ 6.5 = 흡기 가스 센서 예비 FMI
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        int temp3222 = Convert.ToInt32(ecuSubData, 16);
+                                        string state3222 = Convert.ToString(temp3222, 2);
+                                        state3222 = state3222.PadLeft(8, '0');
+                                        string state_3222 = state3222.Substring(3, 5);
+                                        listView1.Items[28].SubItems[8].Text = state_3222.ToString() + " (2)";
+
                                         // index 20,21의 6.6, 6.7 = 흡기 가스 센서 히터 제어
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        int temp3223 = Convert.ToInt32(ecuSubData, 16);
+                                        string state3223 = Convert.ToString(temp3223, 2);
+                                        state3223 = state3223.PadLeft(8, '0');
+                                        string state_3223 = state3223.Substring(1, 2);
+                                        listView1.Items[29].SubItems[8].Text = state3223.ToString() + " (2)";
+
                                         // index 22,23의 7.1 ~ 7.5 = 흡기 NOx 센서 예비 FMI
+                                        ecuSubData = ecuData.Substring(22, 2);
+                                        int temp3224 = Convert.ToInt32(ecuSubData, 16);
+                                        string state3224 = Convert.ToString(temp3224, 2);
+                                        state3224 = state3224.PadLeft(8, '0');
+                                        string state_3224 = state3224.Substring(3, 5);
+                                        listView1.Items[30].SubItems[8].Text = state_3224.ToString() + " (2)";
+
                                         // index 24,25의 8.1 ~ 8.5 = 흡기 산소 센서 예비 FMI
+                                        ecuSubData = ecuData.Substring(24, 2);
+                                        int temp3225 = Convert.ToInt32(ecuSubData, 16);
+                                        string state3225 = Convert.ToString(temp3225, 2);
+                                        state3225 = state3225.PadLeft(8, '0');
+                                        string state_3225 = state3225.Substring(3, 5);
+                                        listView1.Items[31].SubItems[8].Text = state_3225.ToString() + " (2)";
 
                                         break;
 
                                     case "f00f":    // PGN  61455
+
                                         // index 10~13 = NOx 배기
+                                        ecuSubData = ecuData.Substring(12, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(10, 2);
+                                        int outlet_3226 = Convert.ToInt32(ecuSubData, 16);
+                                        outlet_3226 = outlet_3226 * 5;
+                                        outlet_3226 = outlet_3226 / 100;
+                                        outlet_3226 = outlet_3226 - 200;
+                                        listView1.Items[32].SubItems[8].Text = outlet_3226.ToString() + "ppm";
+
                                         // index 14~17 = O2 배기
+                                        ecuSubData = ecuData.Substring(16, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(14, 2);
+                                        double outlet_3227 = Convert.ToInt32(ecuSubData, 16);
+                                        outlet_3227 = outlet_3227 * 0.000514;
+                                        outlet_3227 = outlet_3227 - 12;
+                                        listView1.Items[33].SubItems[8].Text = outlet_3227.ToString() + "%";
+
                                         // index 18,19의 5.1, 5.2 = 배기 가스 센서 전원 상태
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int temp3228 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3228 = Convert.ToString(temp3228, 2);
+                                        state_3228 = state_3228.PadLeft(8, '0');
+                                        state_3228 = state_3228.Substring(6, 2);
+                                        listView1.Items[34].SubItems[8].Text = state_3228 + " (2)";
+
                                         // index 18,19의 5.3, 5.4 = 온도에 따른 배기 가스 센서
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int temp3229 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3229 = Convert.ToString(temp3229, 2);
+                                        state_3229 = state_3229.PadLeft(8, '0');
+                                        state_3229 = state_3229.Substring(4, 2);
+                                        listView1.Items[35].SubItems[8].Text = state_3229 + " (2)";
+
                                         // index 18,19의 5.5, 5.6 = 배기 NOx 안정 판독
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int temp3230 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3230 = Convert.ToString(temp3230, 2);
+                                        state_3230 = state_3230.PadLeft(8, '0');
+                                        state_3230 = state_3230.Substring(2, 2);
+                                        listView1.Items[36].SubItems[8].Text = state_3230 + " (2)";
+
                                         // index 18,19의 5.7, 5.8 = 배기, 넓은 범위의 % O2 판독값 안정
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int temp3231 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3231 = Convert.ToString(temp3231, 2);
+                                        state_3231 = state_3231.PadLeft(8, '0');
+                                        state_3231 = state_3231.Substring(0, 2);
+                                        listView1.Items[37].SubItems[8].Text = state_3231 + " (2)";
+
                                         // index 20,21의 6.1 ~ 6.5 = 배기 가스 센서 히터 예비 FMI
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        int temp3232 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3232 = Convert.ToString(temp3232, 2);
+                                        state_3232 = state_3232.PadLeft(8, '0');
+                                        state_3232 = state_3232.Substring(3, 5);
+                                        listView1.Items[38].SubItems[8].Text = state_3232 + " (2)";
+
                                         // index 20,21의 6.6, 6.7 = 배기 가스 센서 히터 제어
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        int temp3233 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3233 = Convert.ToString(temp3233, 2);
+                                        state_3233 = state_3233.PadLeft(8, '0');
+                                        state_3233 = state_3233.Substring(1, 2);
+                                        listView1.Items[39].SubItems[8].Text = state_3233 + " (2)";
+
                                         // index 22,23의 7.1 ~ 7.5 = 배기 NOx 센서 예비 FMI
+                                        ecuSubData = ecuData.Substring(22, 2);
+                                        int temp3234 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3234 = Convert.ToString(temp3234, 2);
+                                        state_3234 = state_3234.PadLeft(8, '0');
+                                        state_3234 = state_3234.Substring(3, 5);
+                                        listView1.Items[40].SubItems[8].Text = state_3234 + " (2)";
+
                                         // index 24,25의 8.1 ~ 8.5 = 배기 산소 센서 예비 FMI
+                                        ecuSubData = ecuData.Substring(24, 2);
+                                        int temp3235 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3235 = Convert.ToString(temp3235, 2);
+                                        state_3235 = state_3235.PadLeft(8, '0');
+                                        state_3235 = state_3235.Substring(3, 5);
+                                        listView1.Items[41].SubItems[8].Text = state_3235 + " (2)";
 
                                         break;
 
                                     case "f010":    // PGN  61456
+
                                         // index 10~13 = NOx 흡기
+                                        ecuSubData = ecuData.Substring(12, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(10, 2);
+                                        int intake_3255 = Convert.ToInt32(ecuSubData, 16);
+                                        intake_3255 = intake_3255 * 5;
+                                        intake_3255 = intake_3255 / 100;
+                                        intake_3255 = intake_3255 - 200;
+                                        listView1.Items[42].SubItems[8].Text = intake_3255.ToString() + "ppm";
+
                                         // index 14~17 = O2 흡기
+                                        ecuSubData = ecuData.Substring(16, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(14, 2);
+                                        double intake_3256 = Convert.ToInt32(ecuSubData, 16);
+                                        intake_3256 = intake_3256 * 0.000514;
+                                        intake_3256 = intake_3256 - 12;
+                                        listView1.Items[43].SubItems[8].Text = intake_3256.ToString() + "%";
+
                                         // index 18,19의 5.1, 5.2 = 흡기 가스 센서 전원 상태
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int temp3257 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3257 = Convert.ToString(temp3257, 2);
+                                        state_3257 = state_3257.PadLeft(8, '0');
+                                        state_3257 = state_3257.Substring(6, 2);
+                                        listView1.Items[44].SubItems[8].Text = state_3257 + " (2)";
+
                                         // index 18,19의 5.3, 5.4 = 온도에서의 흡기 가스 센서
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int temp3258 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3258 = Convert.ToString(temp3258, 2);
+                                        state_3258 = state_3258.PadLeft(8, '0');
+                                        state_3258 = state_3258.Substring(4, 2);
+                                        listView1.Items[45].SubItems[8].Text = state_3258 + " (2)";
+
                                         // index 18,19의 5.5, 5.6 = 흡기 NOx 안정 판독
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int temp3259 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3259 = Convert.ToString(temp3259, 2);
+                                        state_3259 = state_3259.PadLeft(8, '0');
+                                        state_3259 = state_3259.Substring(2, 2);
+                                        listView1.Items[46].SubItems[8].Text = state_3259 + " (2)";
+
                                         // index 18,19의 5.7, 5.8 = 넓은 범위의 % O2 판독값 안정
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int temp3260 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3260 = Convert.ToString(temp3260, 2);
+                                        state_3260 = state_3260.PadLeft(8, '0');
+                                        state_3260 = state_3260.Substring(0, 2);
+                                        listView1.Items[47].SubItems[8].Text = state_3260 + " (2)";
+
                                         // index 20,21의 6.1 ~ 6.5 = 흡기 가스 센서 히터 예비 FMI
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        int temp3261 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3261 = Convert.ToString(temp3261, 2);
+                                        state_3261 = state_3261.PadLeft(8, '0');
+                                        state_3261 = state_3261.Substring(3, 5);
+                                        listView1.Items[48].SubItems[8].Text = state_3261 + " (2)";
+
                                         // index 20,21의 6.6, 6.7 = 흡기 가스 센서 히터 제어
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        int temp3262 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3262 = Convert.ToString(temp3262, 2);
+                                        state_3262 = state_3262.PadLeft(8, '0');
+                                        state_3262 = state_3262.Substring(1, 2);
+                                        listView1.Items[49].SubItems[8].Text = state_3262 + " (2)";
+
                                         // index 22,23의 7.1 ~ 7.5 = 흡기 NOx 센서 예비 FMI
-                                        // index 24,25의 8.1 ~ 8.5  =  흡기 O2 센서 예비 FMI                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+                                        ecuSubData = ecuData.Substring(22, 2);
+                                        int temp3263 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3263 = Convert.ToString(temp3263, 2);
+                                        state_3263 = state_3263.PadLeft(8, '0');
+                                        state_3263 = state_3263.Substring(3, 5);
+                                        listView1.Items[50].SubItems[8].Text = state_3263 + " (2)";
+
+                                        // index 24,25의 8.1 ~ 8.5  =  흡기 O2 센서 예비 FMI
+                                        ecuSubData = ecuData.Substring(24, 2);
+                                        int temp3264 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3264 = Convert.ToString(temp3264, 2);
+                                        state_3264 = state_3264.PadLeft(8, '0');
+                                        state_3264 = state_3264.Substring(3, 5);
+                                        listView1.Items[51].SubItems[8].Text = state_3264 + " (2)";
+
 
                                         break;
 
                                     case "f011":    // PGN  61457
+
                                         // index 10~13 = NOx 배기
+                                        ecuSubData = ecuData.Substring(12, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(10, 2);
+                                        int outlet_3265 = Convert.ToInt32(ecuSubData, 16);
+                                        outlet_3265 = outlet_3265 * 5;
+                                        outlet_3265 = outlet_3265 / 100;
+                                        outlet_3265 = outlet_3265 - 200;
+                                        listView1.Items[52].SubItems[8].Text = outlet_3265.ToString() + "ppm";
+
                                         // index 14~17 = O2 배기
+                                        ecuSubData = ecuData.Substring(14, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(12, 2);
+                                        double outlet_3266 = Convert.ToInt32(ecuSubData, 16);
+                                        outlet_3266 = outlet_3266 * 0.000514;
+                                        outlet_3266 = outlet_3266 - 12;
+                                        listView1.Items[53].SubItems[8].Text = outlet_3266.ToString() + "%";
+
                                         // index 18,19의 5.1, 5.2 = 배기 가스 센서 전원 상태
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int temp3267 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3267 = Convert.ToString(temp3267, 2);
+                                        state_3267 = state_3267.PadLeft(8, '0');
+                                        state_3267 = state_3267.Substring(6, 2);
+                                        listView1.Items[54].SubItems[8].Text = state_3267 + " (2)";
+
                                         // index 18,19의 5.3, 5.4 = 온도에서의 배기 가스 센서
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int temp3268 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3268 = Convert.ToString(temp3268, 2);
+                                        state_3268 = state_3268.PadLeft(8, '0');
+                                        state_3268 = state_3268.Substring(4,2);
+                                        listView1.Items[55].SubItems[8].Text = state_3268 + " (2)";
+
                                         // index 18,19의 5.5, 5.6 = 배기 NOx 안정 판독
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int temp3269 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3269 = Convert.ToString(temp3269, 2);
+                                        state_3269 = state_3269.PadLeft(8, '0');
+                                        state_3269 = state_3269.Substring(2,2);
+                                        listView1.Items[56].SubItems[8].Text = state_3269 + " (2)";
+
                                         // index 18,19의 5.7, 5.8 = 배기, 넓은 범위의 % O2 판독값 안정
+                                        ecuSubData = ecuData.Substring(18, 2);
+                                        int temp3270 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3270 = Convert.ToString(temp3270, 2);
+                                        state_3270 = state_3270.PadLeft(8, '0');
+                                        state_3270 = state_3270.Substring(0, 2);
+                                        listView1.Items[57].SubItems[8].Text = state_3270 + " (2)";
+
                                         // index 20,21의 6.1 ~ 6.5 = 배기 가스 센서 히터 예비 FMI
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        int temp3271 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3271 = Convert.ToString(temp3271, 2);
+                                        state_3271 = state_3271.PadLeft(8, '0');
+                                        state_3271 = state_3271.Substring(3, 5);
+                                        listView1.Items[58].SubItems[8].Text = state_3271 + " (2)";
+
                                         // index 20,21의 6.6, 6.7 = 배기 가스 센서 히터 제어
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        int temp3272 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3272 = Convert.ToString(temp3272, 2);
+                                        state_3272 = state_3272.PadLeft(8, '0');
+                                        state_3272 = state_3272.Substring(1, 2);
+                                        listView1.Items[59].SubItems[8].Text = state_3272 + " (2)";
+
                                         // index 22,23의 7.1 ~ 7.5 = 배기 NOx 센서 예비 FMI
+                                        ecuSubData = ecuData.Substring(22, 2);
+                                        int temp3273 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3273 = Convert.ToString(temp3273, 2);
+                                        state_3273 = state_3273.PadLeft(8, '0');
+                                        state_3273 = state_3273.Substring(3, 5);
+                                        listView1.Items[60].SubItems[8].Text = state_3273 + " (2)";
+
                                         // index 24,25의 8.1 ~ 8.5 = 배기 산소 센서 예비 FMI
+                                        ecuSubData = ecuData.Substring(24, 2);
+                                        int temp3274 = Convert.ToInt32(ecuSubData, 16);
+                                        string state_3274 = Convert.ToString(temp3274, 2);
+                                        state_3274 = state_3274.PadLeft(8, '0');
+                                        state_3274 = state_3274.Substring(3, 5);
+                                        listView1.Items[61].SubItems[8].Text = state_3274 + " (2)";
 
                                         break;
 
                                     case "f01a":    // PGN  61466
+
                                         // index 10~13 엔진 스로틀 액츄에이터 1 제어 명령
+                                        ecuSubData = ecuData.Substring(12, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(10, 2);
+                                        double control_3464 = Convert.ToInt32(ecuSubData, 16);
+                                        control_3464 = control_3464 * 0.0025;
+                                        listView1.Items[62].SubItems[8].Text = control_3464.ToString() + "%";
+
                                         // index 14~17 엔진 스로틀 액츄에이터 2 제어 명령
+                                        ecuSubData = ecuData.Substring(16, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(14, 2);
+                                        double control_3465 = Convert.ToInt32(ecuSubData, 16);
+                                        control_3465 = control_3465 * 0.0025;
+                                        listView1.Items[63].SubItems[8].Text = control_3465.ToString() + "%";
+
                                         // index 18~21 엔진 연료 액츄에이터 1 제어 명령
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(18, 2);
+                                        double control_633 = Convert.ToInt32(ecuSubData, 16);
+                                        control_633 = control_633 * 0.0025;
+                                        listView1.Items[64].SubItems[8].Text = control_633.ToString() + "%";
+
                                         // index 22~25 엔진 연료 액츄에이터 2 제어 명령
+                                        ecuSubData = ecuData.Substring(24, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(22, 2);
+                                        double control_1244 = Convert.ToInt32(ecuSubData, 16);
+                                        control_1244 = control_1244 * 0.0025;
+                                        listView1.Items[65].SubItems[8].Text = control_1244.ToString() + "%";
 
                                         break;
 
@@ -1669,6 +2101,16 @@ namespace CANObserver
                                         listView1.Items[66].SubItems[8].Text = hour_247.ToString()+ "hour";
 
                                         // index 18~19,20~21,22~23,24~25 = 엔진 총 회전 수
+                                        ecuSubData = ecuData.Substring(24, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(22, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(20, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(18, 2);
+                                        double roll_249 = Convert.ToInt32(ecuSubData, 16);
+                                        roll_249 = roll_249 * 1000;
+                                        listView1.Items[67].SubItems[8].Text = roll_249.ToString() + "r";
+
+
+
                                         break;
 
                                     case "feee":   // PGN  65262
@@ -1679,16 +2121,27 @@ namespace CANObserver
                                         listView1.Items[68].SubItems[8].Text = temper_110.  ToString() + "℃";
 
                                         // index 12~13 = 엔진 연료 온도 1
+                                        ecuSubData = ecuData.Substring(12, 2);
+                                        int temper_174 = Convert.ToInt32(ecuSubData, 16);
+                                        temper_174 = temper_174 - 40;
+                                        listView1.Items[69].SubItems[8].Text = temper_174.ToString() + "℃";
+
                                         // index 14~17 = 엔진 오일 온도 1
                                         ecuSubData = ecuData.Substring(16, 2);
                                         ecuSubData = ecuSubData + ecuData.Substring(14, 2);
-                                        int temper_175 = Convert.ToInt32(ecuSubData, 16);
-                                        temper_175 = temper_175 * 3125;
-                                        temper_175 = temper_175 / 100000;
+                                        double temper_175 = Convert.ToInt32(ecuSubData, 16);
+                                        temper_175 = temper_175 * 0.03125;
                                         temper_175 = temper_175 - 273;
                                         listView1.Items[70].SubItems[8].Text = temper_175.ToString() + "℃";
 
                                         // index 18~21 = 엔진 터보차저 오일 온도
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(18, 2);
+                                        double temper_176 = Convert.ToInt32(ecuSubData, 16);
+                                        temper_176 = temper_176 * 0.03125;
+                                        temper_176 = temper_176 - 273;
+                                        listView1.Items[71].SubItems[8].Text = temper_176.ToString() + "℃";
+
                                         // index 22~23 = 엔진 인터쿨러 온도
                                         ecuSubData = ecuData.Substring(22, 2);
                                         int temper_52 = Convert.ToInt32(ecuSubData, 16);
@@ -1696,6 +2149,11 @@ namespace CANObserver
                                         listView1.Items[72].SubItems[8].Text = temper_52.ToString() + "℃";
 
                                         // index 24~25 = 엔진 인터쿨러 서모스탯 개방
+                                        ecuSubData = ecuData.Substring(24, 2);
+                                        int open_1134 = Convert.ToInt32(ecuSubData, 16);
+                                        open_1134 = open_1134 * 4;
+                                        open_1134 = open_1134 / 10;
+                                        listView1.Items[73].SubItems[8].Text = open_1134.ToString() + "%";
 
                                         break;
 
@@ -1707,6 +2165,12 @@ namespace CANObserver
                                         listView1.Items[74].SubItems[8].Text = pressure_94.ToString() + "kPa";
 
                                         // index 12~13 = 엔진 확장 크랭크케이스 블로바이 압력
+                                        ecuSubData = ecuData.Substring(12, 2);
+                                        int pressure_22 = Convert.ToInt32(ecuSubData, 16);
+                                        pressure_22 = pressure_22 * 5;
+                                        pressure_22 = pressure_22 / 100;
+                                        listView1.Items[75].SubItems[8].Text = pressure_22.ToString() + "kPa";
+
                                         // index 14~15 = 엔진 오일 레벨
                                         ecuSubData = ecuData.Substring(14, 2);
                                         int level_98 = Convert.ToInt32(ecuSubData, 16);
@@ -1722,7 +2186,20 @@ namespace CANObserver
                                         listView1.Items[77].SubItems[8].Text = pressure_100.ToString() + "kPa";
 
                                         // index 18~21 = 엔진 크랭크케이스 압력
+                                        ecuSubData = ecuData.Substring(20, 2);
+                                        ecuSubData = ecuSubData + ecuData.Substring(18, 2);
+                                        double pressure101 = Convert.ToInt32(ecuSubData, 16);
+                                        pressure101 = pressure101 / 128;
+                                        pressure101 = pressure101 - 250;
+                                        int pressure_101 = Convert.ToInt32(pressure101);
+                                        listView1.Items[78].SubItems[8].Text = pressure_101.ToString() + "kPa";
+
                                         // index 22~23 = 엔진 냉각수 압력
+                                        ecuSubData = ecuData.Substring(22, 2);
+                                        int pressure_109 = Convert.ToInt32(ecuSubData, 16);
+                                        pressure_109 = pressure_109 * 2;
+                                        listView1.Items[79].SubItems[8].Text = pressure_109.ToString() + "kPa";
+
                                         // index 24~25 = 엔진 냉각수 레벨
                                         ecuSubData = ecuData.Substring(24, 2);
                                         int level_111 = Convert.ToInt32(ecuSubData, 16);
@@ -1738,6 +2215,7 @@ namespace CANObserver
                                         ecuSubData = ecuData.Substring(10, 2);
                                         int state70 = Convert.ToInt32(ecuSubData, 16);
                                         string temp70 = Convert.ToString(state70, 2);
+                                        temp70 = temp70.PadLeft(8, '0');
                                         string state_70 = temp70.Substring(4, 1) + temp70.Substring(5, 1);
                                         listView1.Items[82].SubItems[8].Text = state_70;
 
@@ -1862,7 +2340,7 @@ namespace CANObserver
                                         if(level_96 > 100) { level_96 = 100; }
                                         listView1.Items[119].SubItems[8].Text = level_96.ToString() + "%";
 
-                                        break;
+                                        break;                       
                                 }
                             }
                             catch(Exception ex)
@@ -2186,5 +2664,11 @@ namespace CANObserver
             }
         }
 
+        //데이터 센드 버튼 클릭 이벤트
+        private void btn_Send_Click(object sender, EventArgs e)
+        {
+            String sendData;
+            //if()
+        }
     }
 }

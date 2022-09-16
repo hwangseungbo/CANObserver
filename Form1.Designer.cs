@@ -47,6 +47,22 @@ namespace CANObserver
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.tbox_data8 = new System.Windows.Forms.TextBox();
+            this.tbox_data7 = new System.Windows.Forms.TextBox();
+            this.tbox_data6 = new System.Windows.Forms.TextBox();
+            this.tbox_data5 = new System.Windows.Forms.TextBox();
+            this.tbox_data4 = new System.Windows.Forms.TextBox();
+            this.tbox_data3 = new System.Windows.Forms.TextBox();
+            this.tbox_data2 = new System.Windows.Forms.TextBox();
+            this.tbox_data1 = new System.Windows.Forms.TextBox();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.tbox_ID = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.btn_Send = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.cb_Sendformat = new System.Windows.Forms.ComboBox();
             this.Monitor = new System.Windows.Forms.TabPage();
             this.listView1 = new System.Windows.Forms.ListView();
             this.PGN = new System.Windows.Forms.ColumnHeader();
@@ -60,10 +76,13 @@ namespace CANObserver
             this.Value = new System.Windows.Forms.ColumnHeader();
             this.비고 = new System.Windows.Forms.ColumnHeader();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.Monitor.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -71,7 +90,8 @@ namespace CANObserver
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.actionToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.helpToolStripMenuItem,
+            this.toolStripMenuItem1});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(845, 24);
@@ -236,12 +256,186 @@ namespace CANObserver
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.tbox_data8);
+            this.groupBox1.Controls.Add(this.tbox_data7);
+            this.groupBox1.Controls.Add(this.tbox_data6);
+            this.groupBox1.Controls.Add(this.tbox_data5);
+            this.groupBox1.Controls.Add(this.tbox_data4);
+            this.groupBox1.Controls.Add(this.tbox_data3);
+            this.groupBox1.Controls.Add(this.tbox_data2);
+            this.groupBox1.Controls.Add(this.tbox_data1);
+            this.groupBox1.Controls.Add(this.numericUpDown1);
+            this.groupBox1.Controls.Add(this.tbox_ID);
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.btn_Send);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.cb_Sendformat);
             this.groupBox1.Location = new System.Drawing.Point(6, 6);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(501, 127);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Monitor";
+            this.groupBox1.Text = "Sender";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 67);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(355, 15);
+            this.label6.TabIndex = 21;
+            this.label6.Text = "ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡDATA(Hex)ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ";
+            // 
+            // tbox_data8
+            // 
+            this.tbox_data8.Location = new System.Drawing.Point(335, 85);
+            this.tbox_data8.Name = "tbox_data8";
+            this.tbox_data8.Size = new System.Drawing.Size(41, 23);
+            this.tbox_data8.TabIndex = 20;
+            this.tbox_data8.Text = "F0";
+            this.tbox_data8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // tbox_data7
+            // 
+            this.tbox_data7.Location = new System.Drawing.Point(288, 85);
+            this.tbox_data7.Name = "tbox_data7";
+            this.tbox_data7.Size = new System.Drawing.Size(41, 23);
+            this.tbox_data7.TabIndex = 19;
+            this.tbox_data7.Text = "DF";
+            this.tbox_data7.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // tbox_data6
+            // 
+            this.tbox_data6.Location = new System.Drawing.Point(241, 85);
+            this.tbox_data6.Name = "tbox_data6";
+            this.tbox_data6.Size = new System.Drawing.Size(41, 23);
+            this.tbox_data6.TabIndex = 18;
+            this.tbox_data6.Text = "BC";
+            this.tbox_data6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // tbox_data5
+            // 
+            this.tbox_data5.Location = new System.Drawing.Point(194, 85);
+            this.tbox_data5.Name = "tbox_data5";
+            this.tbox_data5.Size = new System.Drawing.Size(41, 23);
+            this.tbox_data5.TabIndex = 17;
+            this.tbox_data5.Text = "9A";
+            this.tbox_data5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // tbox_data4
+            // 
+            this.tbox_data4.Location = new System.Drawing.Point(147, 85);
+            this.tbox_data4.Name = "tbox_data4";
+            this.tbox_data4.Size = new System.Drawing.Size(41, 23);
+            this.tbox_data4.TabIndex = 16;
+            this.tbox_data4.Text = "78";
+            this.tbox_data4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // tbox_data3
+            // 
+            this.tbox_data3.Location = new System.Drawing.Point(100, 85);
+            this.tbox_data3.Name = "tbox_data3";
+            this.tbox_data3.Size = new System.Drawing.Size(41, 23);
+            this.tbox_data3.TabIndex = 15;
+            this.tbox_data3.Text = "56";
+            this.tbox_data3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // tbox_data2
+            // 
+            this.tbox_data2.Location = new System.Drawing.Point(53, 85);
+            this.tbox_data2.Name = "tbox_data2";
+            this.tbox_data2.Size = new System.Drawing.Size(41, 23);
+            this.tbox_data2.TabIndex = 14;
+            this.tbox_data2.Text = "34";
+            this.tbox_data2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // tbox_data1
+            // 
+            this.tbox_data1.Location = new System.Drawing.Point(6, 85);
+            this.tbox_data1.Name = "tbox_data1";
+            this.tbox_data1.Size = new System.Drawing.Size(41, 23);
+            this.tbox_data1.TabIndex = 13;
+            this.tbox_data1.Text = "12";
+            this.tbox_data1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(391, 38);
+            this.numericUpDown1.Maximum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(58, 23);
+            this.numericUpDown1.TabIndex = 6;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            // 
+            // tbox_ID
+            // 
+            this.tbox_ID.Location = new System.Drawing.Point(231, 37);
+            this.tbox_ID.Name = "tbox_ID";
+            this.tbox_ID.Size = new System.Drawing.Size(129, 23);
+            this.tbox_ID.TabIndex = 5;
+            this.tbox_ID.Text = "123";
+            this.tbox_ID.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(403, 17);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(30, 15);
+            this.label5.TabIndex = 4;
+            this.label5.Text = "DLC";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(266, 17);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(48, 15);
+            this.label4.TabIndex = 3;
+            this.label4.Text = "ID(Hex)";
+            // 
+            // btn_Send
+            // 
+            this.btn_Send.Location = new System.Drawing.Point(391, 85);
+            this.btn_Send.Name = "btn_Send";
+            this.btn_Send.Size = new System.Drawing.Size(101, 23);
+            this.btn_Send.TabIndex = 2;
+            this.btn_Send.Text = "Send";
+            this.btn_Send.UseVisualStyleBackColor = true;
+            this.btn_Send.Click += new System.EventHandler(this.btn_Send_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(83, 17);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(45, 15);
+            this.label3.TabIndex = 1;
+            this.label3.Text = "Format";
+            // 
+            // cb_Sendformat
+            // 
+            this.cb_Sendformat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_Sendformat.FormattingEnabled = true;
+            this.cb_Sendformat.Items.AddRange(new object[] {
+            "STD DATA",
+            "STD REMOTE",
+            "EXT DATA",
+            "EXT REMOTE"});
+            this.cb_Sendformat.Location = new System.Drawing.Point(6, 37);
+            this.cb_Sendformat.Name = "cb_Sendformat";
+            this.cb_Sendformat.Size = new System.Drawing.Size(199, 23);
+            this.cb_Sendformat.TabIndex = 0;
             // 
             // Monitor
             // 
@@ -325,6 +519,12 @@ namespace CANObserver
             // 
             this.비고.Text = "비고";
             // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(23, 20);
+            this.toolStripMenuItem1.Text = " ";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -347,6 +547,9 @@ namespace CANObserver
             this.tabPage1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.Monitor.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -387,6 +590,23 @@ namespace CANObserver
         private System.Windows.Forms.ColumnHeader Value;
         private System.Windows.Forms.ColumnHeader 비고;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.ComboBox cb_Sendformat;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox tbox_data8;
+        private System.Windows.Forms.TextBox tbox_data7;
+        private System.Windows.Forms.TextBox tbox_data6;
+        private System.Windows.Forms.TextBox tbox_data5;
+        private System.Windows.Forms.TextBox tbox_data4;
+        private System.Windows.Forms.TextBox tbox_data3;
+        private System.Windows.Forms.TextBox tbox_data2;
+        private System.Windows.Forms.TextBox tbox_data1;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.TextBox tbox_ID;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button btn_Send;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
     }
 }
 
